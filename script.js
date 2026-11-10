@@ -67,7 +67,29 @@ document.documentElement.classList.add("js");
   var h=document.querySelector("h1");
   if(!rm){h.setAttribute("aria-label",h.textContent);h.innerHTML=h.textContent.split(" ").map(function(w,i){return '<span class="w" aria-hidden="true"><span style="--i:'+i+'">'+w+'</span></span>';}).join(" ");}
   var gr=document.querySelector(".grid");
-  if(!rm){addEventListener("pointermove",function(e){var b=gr.getBoundingClientRect();gr.style.setProperty("--mx",(e.clientX-b.left)+"px");gr.style.setProperty("--my",(e.clientY-b.top)+"px");},{passive:true});}
+  if(!rm&&gr){
+    var lastX=window.innerWidth*0.5;
+    var lastY=window.innerHeight*0.3;
+    var hasMoved=false;
+
+    function updateGridPos(){
+      var x = hasMoved ? (lastX + (window.scrollX||0)) : (window.innerWidth*0.5);
+      var y = hasMoved ? (lastY + (window.scrollY||0)) : (window.innerHeight*0.3 + (window.scrollY||0));
+      gr.style.setProperty("--mx", x + "px");
+      gr.style.setProperty("--my", y + "px");
+    }
+
+    window.addEventListener("pointermove",function(e){
+      hasMoved=true;
+      lastX=e.clientX;
+      lastY=e.clientY;
+      updateGridPos();
+    },{passive:true});
+
+    window.addEventListener("scroll",updateGridPos,{passive:true});
+    window.addEventListener("resize",updateGridPos,{passive:true});
+    updateGridPos();
+  }
   if(!rm&&"IntersectionObserver" in window){
     var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("on");io.unobserve(e.target);}});},{threshold:.15});
     document.querySelectorAll(".sec h2,.about p,.sub-title,.path li,.comp-card,.skills>div,.filters,.row,.mail,.social").forEach(function(t,k){t.classList.add("rv");t.style.setProperty("--d",(k%4)*70+"ms");io.observe(t);});
@@ -114,30 +136,11 @@ document.documentElement.classList.add("js");
 
   var header=document.querySelector("header");
   if(header){
-    var lastY=window.scrollY||0;
-    var ticking=false;
-    window.addEventListener("scroll",function(){
-      if(!ticking){
-        window.requestAnimationFrame(function(){
-          var currentY=window.scrollY||0;
-          var diff=currentY-lastY;
-          if(currentY<=20){
-            header.classList.remove("hidden");
-            header.classList.remove("scrolled");
-          } else {
-            header.classList.add("scrolled");
-            if(diff>6&&currentY>80){
-              header.classList.add("hidden");
-            } else if(diff<-6){
-              header.classList.remove("hidden");
-            }
-          }
-          lastY=currentY;
-          ticking=false;
-        });
-        ticking=true;
-      }
-    },{passive:true});
+    function updateHeader(){
+      header.classList.toggle("scrolled",(window.scrollY||0)>20);
+    }
+    window.addEventListener("scroll",updateHeader,{passive:true});
+    updateHeader();
   }
 
   var yearEl=document.getElementById("year");
