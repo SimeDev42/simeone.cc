@@ -15,8 +15,9 @@ document.documentElement.classList.add("js");
       if(themeColorMeta) themeColorMeta.setAttribute("content","#000000");
     }
   }
+  try{localStorage.removeItem("theme");}catch(e){}
   var saved=null;
-  try{saved=localStorage.getItem("theme");}catch(e){}
+  try{saved=sessionStorage.getItem("theme");}catch(e){}
   if(saved==="light"){
     applyTheme("light");
   } else {
@@ -29,7 +30,7 @@ document.documentElement.classList.add("js");
 
       if(!document.startViewTransition||matchMedia("(prefers-reduced-motion: reduce)").matches){
         applyTheme(next);
-        try{localStorage.setItem("theme",next);}catch(err){}
+        try{sessionStorage.setItem("theme",next);}catch(err){}
         return;
       }
 
@@ -43,7 +44,7 @@ document.documentElement.classList.add("js");
 
       var transition=document.startViewTransition(function(){
         applyTheme(next);
-        try{localStorage.setItem("theme",next);}catch(err){}
+        try{sessionStorage.setItem("theme",next);}catch(err){}
       });
 
       transition.ready.then(function(){
@@ -72,7 +73,12 @@ document.documentElement.classList.add("js");
     var lastY=window.innerHeight*0.3;
     var hasMoved=false;
 
+    function isMobile(){
+      return window.innerWidth <= 768 || window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+    }
+
     function updateGridPos(){
+      if(isMobile()) return;
       var x = hasMoved ? (lastX + (window.scrollX||0)) : (window.innerWidth*0.5);
       var y = hasMoved ? (lastY + (window.scrollY||0)) : (window.innerHeight*0.3 + (window.scrollY||0));
       gr.style.setProperty("--mx", x + "px");
@@ -80,15 +86,22 @@ document.documentElement.classList.add("js");
     }
 
     window.addEventListener("pointermove",function(e){
+      if(e.pointerType === "touch" || isMobile()) return;
       hasMoved=true;
       lastX=e.clientX;
       lastY=e.clientY;
       updateGridPos();
     },{passive:true});
 
-    window.addEventListener("scroll",updateGridPos,{passive:true});
-    window.addEventListener("resize",updateGridPos,{passive:true});
-    updateGridPos();
+    window.addEventListener("scroll",function(){
+      if(!isMobile()) updateGridPos();
+    },{passive:true});
+
+    window.addEventListener("resize",function(){
+      if(!isMobile()) updateGridPos();
+    },{passive:true});
+
+    if(!isMobile()) updateGridPos();
   }
   if(!rm&&"IntersectionObserver" in window){
     var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("on");io.unobserve(e.target);}});},{threshold:.15});
