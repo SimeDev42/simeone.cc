@@ -1,6 +1,6 @@
 # simeone.cc
 
-Personal portfolio of **Simeone Gentile** — Italian software engineering student based in Vejle, Denmark (SDU) and hackathon engineer with [Elysa's Secret](https://elysasecret.com/).
+Personal portfolio of **Simeone Gentile** — Italian software engineering student based in Vejle, Denmark (SDU) and hackathon team member on [Elysa's Secret](https://elysasecret.com/).
 
 Live at: **[simeone.cc](https://simeone.cc/)**
 
@@ -28,32 +28,6 @@ portfolio/
 ├── favicon.svg    # Scalable vector monochrome icon
 └── README.md      # Documentation
 ```
-
----
-
-## 🛠️ Local Development
-
-No build tooling or package manager required. Simply open `index.html` in any modern browser, or run a local static server:
-
-```bash
-# Python 3
-python3 -m http.server 8000
-
-# or Node.js / npx
-npx serve .
-```
-
-Visit `http://localhost:8000` in your browser.
-
----
-
-## 🚀 Deployment
-
-The project can be deployed instantly to any static hosting provider:
-
-- **Cloudflare Pages:** Connect repository, framework preset: `None`, output directory: `/`.
-- **GitHub Pages:** Go to *Settings > Pages > Deploy from branch (main)*.
-- **Vercel:** Run `vercel` or import repository with standard static configuration.
 
 ---
 
