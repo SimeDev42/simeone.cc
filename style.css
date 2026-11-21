@@ -581,6 +581,7 @@ h2 {
   display: flex;
   gap: 1.4rem;
   overflow-x: auto;
+  overflow-y: hidden;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
